@@ -1,10 +1,10 @@
-name: First Workflow
-on: [push]
+name: First Workflow  # workflow name
+on: [push]    # event type
 
-jobs:
-    run-shell-commands:
-        runs-on: ubuntu-latest
-        steps:
+jobs:         
+    run-shell-commands: # job id (type: map)
+        runs-on: ubuntu-latest  # OS of runner machine on which job will run
+        steps:                  # steps to perform (type: array)
             - name: echo a string
               run: echo "Hello World!"
             - name: Multiline command
