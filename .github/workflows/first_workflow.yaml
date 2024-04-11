@@ -1,0 +1,15 @@
+name: First Workflow  # workflow name
+on: [push]  # event type
+
+job:
+    run-shell-commands:     # job id 
+        runs-on: ubuntu-latest  # OS of runner machine on which job will run
+        steps:
+            - name: echo a string
+              run: echo "Hello World"  # for ubuntu, default shell is bash. For windows, it is powershell
+            - name: Multiline command
+              run: |
+                node -v
+                npm -v
+
+    
