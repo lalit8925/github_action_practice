@@ -1,0 +1,26 @@
+name: First Workflow  
+on: [push]  
+
+jobs:
+    run-shell-commands:      
+        runs-on: ubuntu-latest  
+        steps:
+            - name: echo a string
+              run: echo "Hello World"  
+            - name: Multiline command
+              run: |
+                node -v
+                npm -v
+    parallel-job-macos:
+        runs-on: macos-latest
+        steps:
+            - name: View SW Version
+              run: sw_vers
+    dependent-job:
+        runs-on: windows-latest
+        needs: run-shell-commands # "needs" is key to define job dependencies, "id" of job as its value on which this job is dependent
+        steps:
+            - name: echo a string
+              run: Write-Output "Windows String"
+            - name: Error Step 
+              run: doesnotexist
