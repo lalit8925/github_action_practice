@@ -11,16 +11,3 @@ jobs:
               run: |
                 node -v
                 npm -v
-    parallel-job-macos:
-      runs-on: macos-latest
-      steps:
-        - name: view software version
-          run: sw_vers 
-    dependant-job:
-      runs-on: windows-latest
-      needs: run-shell-commands
-      steps:
-        - name: echo a string 
-          run: Write-Output "windows string"
-        - name: Error step 
-          run: doesnotexits
