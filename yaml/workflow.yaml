@@ -1,0 +1,148 @@
+name: CI/CD Pipeline # key:value
+
+on:                             # key:value
+  push:                           #nested_key:nested_value
+    branches:                     #array:
+      - main
+      - develop
+      - feature/*
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Simple array
+        node-version: [14.x, 16.x, 18.x, 20.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+        # Nested array - exclude specific combinations
+        exclude:
+          - node-version: 14.x
+            os: macos-latest
+          - node-version: 16.x
+            os: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      # Multi-line value using pipe (|) - preserves newlines
+      - name: Run tests with coverage
+        run: |
+          npm run test:coverage
+          npm run lint
+          npm run build
+
+      # Multi-line value using pipe (>) - folds newlines to spaces
+      - name: Generate report
+        run: >
+          echo "Build completed successfully"
+          && echo "Node version: ${{ matrix.node-version }}"
+          && echo "OS: ${{ matrix.os }}"
+
+      # Another example with nested structure
+      - name: Deploy configuration
+        env:
+          DEPLOY_TARGETS:
+            - production
+            - staging
+          BUILD_SETTINGS:
+            debug: false
+            optimize: true
+        run: |
+          echo "Deploying to multiple environments..."
+          echo "Build optimization enabled"
+          npm run deploy
+
+      # Multi-step with complex multi-line command
+      - name: Advanced build steps
+        run: |
+          echo "Step 1: Compiling TypeScript..."
+          npm run build:ts
+          
+          echo "Step 2: Running security audit..."
+          npm audit --audit-level=moderate
+          
+          echo "Step 3: Creating artifacts..."
+          mkdir -p dist
+          cp -r build/* dist/
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        test-suite:
+          - unit
+          - integration
+          - e2e
+        database:
+          - postgres
+          - mysql
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup test environment
+        run: |
+          echo "Configuring ${{ matrix.database }} database"
+          echo "Running ${{ matrix.test-suite }} tests"
+
+      # Multi-line description with complex formatting
+      - name: Execute test suite
+        run: |
+          npm run test:${{ matrix.test-suite }} \
+            --database=${{ matrix.database }} \
+            --coverage \
+            --verbose
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Example of pipe operator for detailed logging/output
+      - name: Deployment summary
+        run: |
+          echo "=========================================="
+          echo "Deployment Information"
+          echo "=========================================="
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "=========================================="
+
+      - name: Deploy to production
+        env:
+          # Array-like environment variable
+          ENVIRONMENTS: "staging production backup"
+          # Multi-line description
+          DEPLOYMENT_LOG: |
+            Deployment started at $(date)
+            Environment: production
+            Version: ${{ github.sha }}
+        run: |
+          echo "$DEPLOYMENT_LOG"
+          echo "Deploying application..."
