@@ -1,0 +1,19 @@
+name: First Workflow 
+on: [push]
+
+jobs:
+    run-shell-commands:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Run multiple shell commands
+          run: |
+            echo "Starting the process..."
+            echo "Process running..."
+            echo "Process completed!"
+        - name: Multi line commands
+          run: |
+            echo "This is line one."
+            echo "This is line two."
+            echo "This is line three."
+            node -v
+            npm -v
