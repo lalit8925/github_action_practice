@@ -1,0 +1,18 @@
+name: Parallel and dependent Jobs Workflow
+on: [push]
+jobs:
+    run-shell-commands:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Run multiple shell commands in parallel
+              run: |
+                echo "Starting command 1" &
+                sleep 5 && echo "Command 1 completed" &
+                echo "Starting command 2" &
+                sleep 3 && echo "Command 2 completed" &
+                wait
+    parallel-jobs-macos:
+        runs-on: macos-latest
+        steps:
+            - name: MacOS Job
+              run: echo "This job runs on macOS"
