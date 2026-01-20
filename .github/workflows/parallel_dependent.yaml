@@ -16,3 +16,9 @@ jobs:
         steps:
             - name: MacOS Job
               run: echo "This job runs on macOS"
+    dependent-job:
+        needs: run-shell-commands
+        runs-on: windows-latest
+        steps:
+            - name: Dependent Job
+              run: echo "This job runs after the run-shell-commands job is complete"
